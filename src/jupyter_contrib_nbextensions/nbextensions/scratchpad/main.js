@@ -48,6 +48,20 @@ define([
     this.element.append($("<div/>").addClass('cell-wrapper').append(this.cell.element));
     cell.render();
     cell.refresh();
+
+    this.saved_height = Math.max(100, $("#site").height() * 0.33);
+    this.element.resizable({
+      handles: 'n',
+      stop: function(event, ui) {
+        scratchpad.saved_height = ui.size.height;
+        $("#notebook-container").css('margin-bottom', scratchpad.saved_height);
+      },
+      maxHeight: $("#site").height(),
+      minHeight: 100,
+    });
+    
+    // Add an icon to the resize handle
+    this.element.children('.ui-resizable-n').append('<span class="ui-resizable-icon ui-icon ui-icon-grip-dotted-horizontal"></span>');
     this.collapse();
 
     // override ctrl/shift-enter to execute me if I'm focused instead of the notebook's cell
@@ -69,6 +83,19 @@ define([
     this.km.edit_shortcuts.add_shortcuts(shortcuts);
     this.km.command_shortcuts.add_shortcuts(shortcuts);
 
+
+    // TODO: Sync left and right margins with #site
+    
+    var callbackPageResize = function (evt) {
+      var site_height = $("#site").height();
+      scratchpad.element.resizable('option', 'maxHeight', site_height);
+      if (site_height < scratchpad.saved_height) {
+          scratchpad.element.height(site_height);
+          scratchpad.saved_height = site_height;
+      }
+    }
+    $(window).on('resize', callbackPageResize);
+
     // finally, add me to the page
     $("body").append(this.element);
   };
@@ -82,25 +109,28 @@ define([
     return false;
   };
 
+  // TODO: turn on resizeable...
   Scratchpad.prototype.expand = function () {
+    this.element.resizable('enable');
     this.collapsed = false;
-    var site_height = $("#site").height();
     this.element.animate({
-      height: site_height,
-    }, 200);
+      height: this.saved_height,
+    }, this.saved_height);
     this.open_button.hide();
     this.close_button.show();
     this.cell.element.show();
     this.cell.focus_editor();
-    //$("#notebook-container").css('margin-left', 0);
+    $("#notebook-container").css('margin-bottom', this.saved_height);
   };
-
+  
+  // TODO: turn off resizeable...
   Scratchpad.prototype.collapse = function () {
+    this.element.resizable('disable');
     this.collapsed = true;
-    //$("#notebook-container").css('margin-left', 'auto');
+    $("#notebook-container").css('margin-bottom', 0);
     this.element.animate({
       height: 0,
-    }, 100);
+    }, this.saved_height);
     this.close_button.hide();
     this.open_button.show();
     this.cell.element.hide();

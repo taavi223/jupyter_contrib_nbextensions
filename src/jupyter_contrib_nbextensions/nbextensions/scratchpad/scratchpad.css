@@ -1,16 +1,17 @@
 #nbextension-scratchpad {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50%;
+  left: 0;
+  top: auto !important;
+  bottom: -1px !important;
+  width: 100%;
   background-color: #F8F5E1;
-  border-left: 1px solid #aaa;
   border-top: 1px solid #aaa;
   z-index: 105;
 }
 
 #nbextension-scratchpad .cell-wrapper {
   height: 100%;
+  padding-top: 8px;
   overflow: auto;
 }
 
@@ -36,4 +37,9 @@
 
 .scratchpad-open {
   margin-top: -32px;
+}
+
+#nbextension-scratchpad .ui-resizable-icon {
+  position: absolute;
+  left: calc(50% - 8px);
 }
