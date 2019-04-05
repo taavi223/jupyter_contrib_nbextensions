@@ -668,8 +668,7 @@
         $('<i>')
             .addClass('fa fa-fw fa-caret-down')
             .on('click', callback_collapser) // callback
-            .prependTo('.toc li:has(ul) > span'); // only if li has descendants
-        $('<i>').addClass('fa fa-fw ').prependTo('.toc li:not(:has(ul)) > span'); // otherwise still add <i> to keep things aligned
+            .prependTo('.toc li > span');
 
         events[cfg.collapse_to_match_collapsible_headings ? 'on' : 'off'](
             'collapse.CollapsibleHeading uncollapse.CollapsibleHeading', callback_toc2_collapsible_headings);
